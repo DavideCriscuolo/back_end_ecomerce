@@ -18,5 +18,4 @@ connection.connect((err) => {
     console.log("Connection Success");
   }
 });
-
 export default connection;
