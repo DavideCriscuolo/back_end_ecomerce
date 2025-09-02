@@ -1,5 +1,4 @@
-import mysql from "mysql2";
-
+const mysql = require("mysql2");
 const credentials = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -14,8 +13,15 @@ console.log(connection);
 connection.connect((err) => {
   if (err) {
     console.log(err.message);
+    console.log(
+      process.env.DB_HOST,
+      process.env.DB_USER,
+      process.env.DB_PW,
+      process.env.DB_NAME
+    );
   } else {
     console.log("Connection Success");
   }
 });
-export default connection;
+
+module.exports = connection;
