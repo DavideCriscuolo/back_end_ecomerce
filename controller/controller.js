@@ -28,5 +28,18 @@ const show = (req, res) => {
     res.json(results[0]);
   });
 };
+const bestSellers = (req, res) => {
+  const venduto = req.params.tag;
+  const sql = "SELECT * FROM pc WHERE tag = ?;";
 
-module.exports = { index, show };
+  connection.query(sql, [venduto], (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    //console.log(results);
+    res.json(results);
+  });
+};
+module.exports = { index, show, bestSellers };
