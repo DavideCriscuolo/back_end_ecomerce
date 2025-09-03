@@ -14,4 +14,19 @@ const index = (req, res) => {
     res.json(results);
   });
 };
-module.exports = { index };
+
+const show = (req, res) => {
+  const id = req.params.id;
+  const sql = "SELECT * FROM pc WHERE id=?";
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        err: err.message,
+      });
+    }
+    res.json(results[0]);
+  });
+};
+
+module.exports = { index, show };

@@ -5,5 +5,6 @@ const eComerceController = require("../controller/controller");
 const router = express.Router();
 
 router.get("/", eComerceController.index);
+router.get("/pc/:id", eComerceController.show);
 
 module.exports = router;
