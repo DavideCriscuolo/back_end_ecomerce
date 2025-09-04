@@ -42,4 +42,7 @@ const bestSellers = (req, res) => {
     res.json(results);
   });
 };
+
+const postOrder = (req, res) => {};
+
 module.exports = { index, show, bestSellers };
