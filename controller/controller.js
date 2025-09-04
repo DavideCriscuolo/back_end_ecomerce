@@ -43,6 +43,31 @@ const bestSellers = (req, res) => {
   });
 };
 
-const postOrder = (req, res) => {};
+const postOrder = (req, res) => {
+  const prezzo_tot = req.body.prezzo_tot;
+  const id_prodotto = req.params.id_prodotto;
+  const nome = req.body.nome;
+  const cognome = req.body.cognome;
+  const email = req.body.email;
+  const indirizzo = req.body.indirizzo;
 
-module.exports = { index, show, bestSellers };
+  const sql =
+    "INSERT INTO ordini ( prezzo_tot,id_prodotto,  nome, cognome, email, indirizzo) VALUES ( ?, ?, ?, ?, ?, ?);";
+
+  connection.query(
+    sql,
+    [prezzo_tot, id_prodotto, nome, cognome, email, indirizzo],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({
+          err: err.message,
+        });
+      }
+      //console.log(results);
+      res.json(results);
+      console.log("ordine effettuato");
+    }
+  );
+};
+
+module.exports = { index, show, bestSellers, postOrder };
