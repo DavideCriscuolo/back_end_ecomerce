@@ -50,6 +50,18 @@ const postOrder = (req, res) => {
   const cognome = req.body.cognome;
   const email = req.body.email;
   const indirizzo = req.body.indirizzo;
+  if (
+    !prezzo_tot ||
+    !id_prodotto ||
+    !nome ||
+    !cognome ||
+    !email ||
+    !indirizzo
+  ) {
+    return res.status(400).json({
+      err: "dati mancanti",
+    });
+  }
 
   const sql =
     "INSERT INTO ordini ( prezzo_tot,id_prodotto,  nome, cognome, email, indirizzo) VALUES ( ?, ?, ?, ?, ?, ?);";
@@ -63,6 +75,7 @@ const postOrder = (req, res) => {
           err: err.message,
         });
       }
+
       //console.log(results);
       res.json(results);
       console.log("ordine effettuato");
