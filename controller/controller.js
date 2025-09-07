@@ -44,41 +44,65 @@ const bestSellers = (req, res) => {
 };
 
 const postOrder = (req, res) => {
-  const prezzo_tot = req.body.prezzo_tot;
-  const id_prodotto = req.params.id_prodotto;
-  const nome = req.body.nome;
-  const cognome = req.body.cognome;
-  const email = req.body.email;
-  const indirizzo = req.body.indirizzo;
+  const { cliente, prodotti } = req.body;
+
   if (
-    !prezzo_tot ||
-    !id_prodotto ||
-    !nome ||
-    !cognome ||
-    !email ||
-    !indirizzo
+    !cliente ||
+    !prodotti ||
+    !cliente.nome ||
+    !cliente.cognome ||
+    !cliente.email ||
+    !cliente.indirizzo
   ) {
-    return res.status(400).json({
-      err: "dati mancanti",
-    });
+    return res.status(400).json({ err: "Dati mancanti" });
   }
 
-  const sql =
-    "INSERT INTO ordini ( prezzo_tot,id_prodotto,  nome, cognome, email, indirizzo) VALUES ( ?, ?, ?, ?, ?, ?);";
-
+  // Recupero prezzi prodotti
+  const productIds = prodotti.map((p) => p.id_prodotto);
   connection.query(
-    sql,
-    [prezzo_tot, id_prodotto, nome, cognome, email, indirizzo],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({
-          err: err.message,
-        });
-      }
+    "SELECT id, prezzo FROM pc WHERE id IN (?)",
+    [productIds],
+    (err, rows) => {
+      if (err) return res.status(500).json({ err: err.message });
 
-      //console.log(results);
-      res.json(results);
-      console.log("ordine effettuato");
+      // Calcolo totale
+      let totale = 0;
+      prodotti.forEach((p) => {
+        const dbProd = rows.find((r) => r.id === p.id_prodotto);
+        if (dbProd) totale += dbProd.prezzo * (p.quantita || 1);
+      });
+
+      // Inserisco ordine
+      connection.query(
+        "INSERT INTO ordini (prezzo_tot, nome, cognome, email, indirizzo) VALUES (?, ?, ?, ?, ?)",
+        [
+          totale,
+          cliente.nome,
+          cliente.cognome,
+          cliente.email,
+          cliente.indirizzo,
+        ],
+        (err, orderResult) => {
+          if (err) return res.status(500).json({ err: err.message });
+
+          const orderId = orderResult.insertId;
+
+          // Inserisco prodotti nella tabella ponte
+          prodotti.forEach((p) => {
+            connection.query(
+              "INSERT INTO order_prodcut (id_product, id_order, quantita) VALUES (?, ?, ?)",
+              [p.id_prodotto, orderId, p.quantita || 1],
+              (err) => {
+                if (err)
+                  console.error("Errore inserimento prodotto:", err.message);
+              }
+            );
+          });
+
+          // Rispondo al client dopo aver inserito l'ordine
+          res.status(200).json({ message: "Ordine effettuato", orderId });
+        }
+      );
     }
   );
 };
