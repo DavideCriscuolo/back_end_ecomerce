@@ -46,15 +46,20 @@ const bestSellers = (req, res) => {
 const postOrder = (req, res) => {
   const { cliente, prodotti } = req.body;
 
-  if (
-    !cliente ||
-    !cliente.nome ||
-    !cliente.cognome ||
-    !cliente.email ||
-    !cliente.indirizzo
-  ) {
-    console.log(cliente, prodotti);
-    return res.status(400).json({ err: "Dati mancanti" });
+  if (cliente.name === "") {
+    return res.status(400).json({ err: "Nome mancante" });
+  }
+
+  if (cliente.cognome === "") {
+    return res.status(400).json({ err: "Cognome mancante" });
+  }
+
+  if (cliente.email === "") {
+    return res.status(400).json({ err: "Email mancante" });
+  }
+
+  if (cliente.indirizzo === "") {
+    return res.status(400).json({ err: "Indirizzo mancante" });
   }
 
   // Recupero prezzi prodotti
@@ -70,9 +75,9 @@ const postOrder = (req, res) => {
       prodotti.forEach((p) => {
         //cerca nel db il prodotto corrispondente al prodotto dell'ordine e moltiplica per la quantita se presente
         const prod = rows.find((r) => r.id === p.id_product);
-        if (prod) totale += prod.prezzo * (p.quantita || 1);
+        if (prod) totale += prod.prezzo * (p.quantita || 1); // se non c'è quantità, metti 1
       });
-      console.log(totale);
+      console.log(totale); // stampa il totale
       // Inserisco ordine
       connection.query(
         "INSERT INTO ordini (prezzo_tot, nome, cognome, email, indirizzo) VALUES (?, ?, ?, ?, ?)",
