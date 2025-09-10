@@ -44,7 +44,7 @@ const bestSellers = (req, res) => {
 };
 
 const postOrder = (req, res) => {
-  const { cliente, prodotti } = req.body;
+  const { cliente, items } = req.body;
 
   if (cliente.name === "") {
     return res.status(400).json({ err: "Nome mancante" });
@@ -62,8 +62,8 @@ const postOrder = (req, res) => {
     return res.status(400).json({ err: "Indirizzo mancante" });
   }
 
-  // Recupero prezzi prodotti
-  const productIds = prodotti.map((p) => p.id_product);
+  // Recupero prezzi items
+  const productIds = items.map((p) => p.id_product);
   connection.query(
     "SELECT id, prezzo FROM pc WHERE id IN (?)",
     [productIds],
@@ -72,7 +72,7 @@ const postOrder = (req, res) => {
 
       // Calcolo totale
       let totale = 0;
-      prodotti.forEach((p) => {
+      items.forEach((p) => {
         //cerca nel db il prodotto corrispondente al prodotto dell'ordine e moltiplica per la quantita se presente
         const prod = rows.find((r) => r.id === p.id_product);
         if (prod) totale += prod.prezzo * (p.quantita || 1); // se non c'è quantità, metti 1
@@ -93,8 +93,8 @@ const postOrder = (req, res) => {
 
           const orderId = orderResult.insertId;
 
-          // Inserisco prodotti nella tabella ponte
-          prodotti.forEach((p) => {
+          // Inserisco items nella tabella ponte
+          items.forEach((p) => {
             connection.query(
               "INSERT INTO order_prodcut (id_product, id_order, quantita) VALUES (?, ?, ?)",
               [p.id_product, orderId, p.quantita || 1],
