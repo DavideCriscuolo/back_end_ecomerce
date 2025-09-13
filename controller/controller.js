@@ -201,4 +201,30 @@ const postOrder = (req, res) => {
   );
 };
 
-module.exports = { index, show, bestSellers, postOrder };
+const productFilrt = (req, res) => {
+  const { filtro1, filtro2, valore1, valore2 } = req.body;
+
+  let sql = "SELECT * FROM pc";
+  const params = [];
+
+  if (filtro1 && valore1) {
+    sql += ` WHERE ${filtro1} LIKE ?`;
+    params.push(`%${valore1}%`);
+
+    if (filtro2 && valore2) {
+      sql += ` AND ${filtro2} LIKE ?`;
+      params.push(`%${valore2}%`);
+    }
+  }
+
+  connection.query(sql, params, (err, result) => {
+    if (err) {
+      console.error("Errore ricerca prodotti:", err);
+      return res.status(500).json({ err: err.message });
+    }
+
+    res.status(200).json(result);
+  });
+};
+
+module.exports = { index, show, bestSellers, postOrder, productFilrt };
