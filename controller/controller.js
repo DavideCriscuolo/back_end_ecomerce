@@ -207,16 +207,22 @@ const productFilrt = (req, res) => {
   let sql = "SELECT * FROM pc";
   const params = [];
 
-  if (filtro1 && valore1) {
-    sql += ` WHERE ${filtro1} LIKE ?`;
+  if (filtro1 !== "" && valore1 !== "" && filtro2 !== "" && valore2 !== 0) {
+    sql += ` WHERE ${filtro1} LIKE ? AND ${filtro2} = ?`;
     params.push(`%${valore1}%`);
-
-    if (filtro2 && valore2) {
-      sql += ` AND ${filtro2} LIKE ?`;
-      params.push(`%${valore2}%`);
-    }
+    params.push(valore2);
   }
 
+  if (filtro1 === "" && valore1 === "" && filtro2 !== "" && valore2 !== 0) {
+    sql += ` WHERE ${filtro2} = ?`;
+    params.push(valore2);
+  }
+  if (filtro1 !== "" && valore1 !== "" && filtro2 === "" && valore2 === 0) {
+    sql += ` WHERE ${filtro1} LIKE  ?`;
+    params.push(`%${valore1}%`);
+  }
+
+  console.log(req.body);
   connection.query(sql, params, (err, result) => {
     if (err) {
       console.error("Errore ricerca prodotti:", err);
