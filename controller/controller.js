@@ -207,19 +207,22 @@ const productFilrt = (req, res) => {
   let sql = "SELECT * FROM pc";
   const params = [];
 
-  if (filtro1 !== "" && valore1 !== "" && filtro2 !== "" && valore2 !== 0) {
-    sql += ` WHERE ${filtro1} LIKE ? AND ${filtro2} = ?`;
+  if (filtro1 !== "" && valore1 !== "" && filtro2 !== "" && valore2 !== "") {
+    sql += ` WHERE ${filtro1} LIKE ? AND ${filtro2} LIKE ?`;
     params.push(`%${valore1}%`);
-    params.push(valore2);
+    params.push(`%${valore2}%`);
+    console.log(sql);
   }
 
-  if (filtro1 === "" && valore1 === "" && filtro2 !== "" && valore2 !== 0) {
-    sql += ` WHERE ${filtro2} = ?`;
-    params.push(valore2);
+  if (filtro1 === "" && valore1 === "" && filtro2 !== "" && valore2 !== "") {
+    sql += ` WHERE ${filtro2} LIKE ?`;
+    params.push(`%${valore2}%`);
+    console.log(sql);
   }
-  if (filtro1 !== "" && valore1 !== "" && filtro2 === "" && valore2 === 0) {
+  if (filtro1 !== "" && valore1 !== "" && filtro2 === "" && valore2 === "") {
     sql += ` WHERE ${filtro1} LIKE  ?`;
     params.push(`%${valore1}%`);
+    console.log(sql);
   }
 
   console.log(req.body);
