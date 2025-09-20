@@ -242,7 +242,7 @@ const store = (req, res) => {
   const {
     nome,
     descrizione,
-    case: casePc,
+    casePc,
     formato_case,
     gb_ram,
     processore,
@@ -286,18 +286,16 @@ const store = (req, res) => {
     return res.status(400).json({ err: "Ventole mancante o non valide" });
   if (!img || typeof img !== "string")
     return res.status(400).json({ err: "Img mancante o non valida" });
-  if (!tag || typeof tag !== "string")
-    return res.status(400).json({ err: "Tag mancante o non valido" });
   if (!slug || typeof slug !== "string")
     return res.status(400).json({ err: "Slug mancante o non valido" });
-
+  if (!ram || typeof ram !== "string") {
+    return res.status(400).json({ err: "Ram mancante o non valido" });
+  }
   // Validazione numeri
   if (isNaN(gb_ram) || gb_ram <= 0)
     return res.status(400).json({ err: "Gb_ram mancante o non valido" });
   if (isNaN(gb_vram) || gb_vram <= 0)
     return res.status(400).json({ err: "Gb_vram mancante o non valido" });
-  if (isNaN(ram) || ram <= 0)
-    return res.status(400).json({ err: "Ram mancante o non valida" });
   if (isNaN(prezzo) || prezzo <= 0)
     return res.status(400).json({ err: "Prezzo mancante o non valido" });
   if (isNaN(gb_archiviazione) || gb_archiviazione <= 0)
