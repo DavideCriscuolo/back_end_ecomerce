@@ -9,4 +9,5 @@ router.get("/pc/:id", eComerceController.show);
 router.get("/tag/:tag", eComerceController.bestSellers);
 router.post("/order", eComerceController.postOrder);
 router.post("/pc_filter", eComerceController.productFilrt);
+router.post("/store", eComerceController.store);
 module.exports = router;
