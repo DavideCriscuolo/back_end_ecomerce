@@ -447,6 +447,18 @@ const modify = (req, res) => {
   );
 };
 
+const deleteProduct = (req, res) => {
+  const { id } = req.body.id;
+  const sql = "DELETE FROM pc WHERE id = ?";
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ err: err.message });
+    }
+    res.status(200).json({ message: "Proddotto eliminato con sucesso" });
+  });
+};
+
 module.exports = {
   index,
   show,
@@ -455,4 +467,5 @@ module.exports = {
   productFilrt,
   store,
   modify,
+  deleteProduct,
 };
