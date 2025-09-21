@@ -340,4 +340,119 @@ const store = (req, res) => {
   );
 };
 
-module.exports = { index, show, bestSellers, postOrder, productFilrt, store };
+const modify = (req, res) => {
+  const {
+    nome,
+    descrizione,
+    casePc,
+    formato_case,
+    gb_ram,
+    processore,
+    dissipatore,
+    ram,
+    mobo,
+    scheda_video,
+    gb_vram,
+    alimentatore,
+    archiviazione,
+    gb_archiviazione,
+    ventole,
+    img,
+    tag,
+    prezzo,
+    slug,
+    id,
+  } = req.body;
+
+  // Validazione stringhe
+  if (id === undefined) {
+    return res.status(400).json({ err: "Id mancante" });
+  }
+  if (!nome || typeof nome !== "string")
+    return res.status(400).json({ err: "Nome mancante o non valido" });
+  if (!descrizione || typeof descrizione !== "string")
+    return res.status(400).json({ err: "Descrizione mancante o non valida" });
+  if (!casePc || typeof casePc !== "string")
+    return res.status(400).json({ err: "Case mancante o non valido" });
+  if (!formato_case || typeof formato_case !== "string")
+    return res.status(400).json({ err: "Formato_case mancante o non valido" });
+  if (!processore || typeof processore !== "string")
+    return res.status(400).json({ err: "Processore mancante o non valido" });
+  if (!dissipatore || typeof dissipatore !== "string")
+    return res.status(400).json({ err: "Dissipatore mancante o non valido" });
+  if (!mobo || typeof mobo !== "string")
+    return res.status(400).json({ err: "Mobo mancante o non valido" });
+  if (!scheda_video || typeof scheda_video !== "string")
+    return res.status(400).json({ err: "Scheda_video mancante o non valida" });
+  if (!alimentatore || typeof alimentatore !== "string")
+    return res.status(400).json({ err: "Alimentatore mancante o non valido" });
+  if (!archiviazione || typeof archiviazione !== "string")
+    return res.status(400).json({ err: "Archiviazione mancante o non valida" });
+  if (!ventole || typeof ventole !== "string")
+    return res.status(400).json({ err: "Ventole mancante o non valide" });
+  if (!img || typeof img !== "string")
+    return res.status(400).json({ err: "Img mancante o non valida" });
+  if (!slug || typeof slug !== "string")
+    return res.status(400).json({ err: "Slug mancante o non valido" });
+  if (!ram || typeof ram !== "string") {
+    return res.status(400).json({ err: "Ram mancante o non valido" });
+  }
+  // Validazione numeri
+  if (isNaN(gb_ram) || gb_ram <= 0)
+    return res.status(400).json({ err: "Gb_ram mancante o non valido" });
+  if (isNaN(gb_vram) || gb_vram <= 0)
+    return res.status(400).json({ err: "Gb_vram mancante o non valido" });
+  if (isNaN(prezzo) || prezzo <= 0)
+    return res.status(400).json({ err: "Prezzo mancante o non valido" });
+  if (isNaN(gb_archiviazione) || gb_archiviazione <= 0)
+    return res
+      .status(400)
+      .json({ err: "Gb_archiviazione mancante o non valida" });
+
+  const sql =
+    "UPDATE pc SET nome = ?, descrizione = ?, casePc = ?, formato_case = ?, gb_ram = ?, processore = ?, dissipatore = ?, ram = ?, mobo = ?, scheda_video = ?, gb_vram = ?, alimentatore = ?, archiviazione = ?, gb_archiviazione = ?, ventole = ?, img = ?, tag = ?, prezzo = ?, slug = ? WHERE (id = ?);";
+  connection.query(
+    sql,
+    [
+      nome,
+      descrizione,
+      casePc,
+      formato_case,
+      gb_ram,
+      processore,
+      dissipatore,
+      ram,
+      mobo,
+      scheda_video,
+      gb_vram,
+      alimentatore,
+      archiviazione,
+      gb_archiviazione,
+      ventole,
+      img,
+      tag,
+      prezzo,
+      slug,
+      id,
+    ],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ err: err.message });
+      }
+      res.status(201).json({
+        message: "Prodotto modificato con successo",
+        id: id,
+      });
+    }
+  );
+};
+
+module.exports = {
+  index,
+  show,
+  bestSellers,
+  postOrder,
+  productFilrt,
+  store,
+  modify,
+};
